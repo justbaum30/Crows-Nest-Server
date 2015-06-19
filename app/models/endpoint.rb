@@ -10,4 +10,7 @@ class Endpoint < ActiveRecord::Base
     self.number_successful_requests > 0
   end
 
+  def status_css_class
+    self.status ? 'good' : 'bad'
+  end
 end
