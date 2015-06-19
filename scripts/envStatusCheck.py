@@ -6,84 +6,94 @@ from urlparse import urlparse, parse_qs
 from time import gmtime, strftime, sleep
  
 '''
-python userCheck.py -e 'https://tsys.mapi.discovercard.com/cardsvcs/acs/acct/v1/account' -u 6011008270041780 -p ccccc -t 0
-
-python userCheck.py -e 'https://mocksolstice.herokuapp.com/discovercard/pb/play/cardsvcs/acs/acct/v1/account' -u 6011008270041780 -p ccccc -t 0
 
 '''
 
 def main(argv):
-	endpoint = ''
-	user = ''
-	password = ''
-	fileName = ''
-	timer = 0
 
-	#input data
-	try:
-		opts, args = getopt.getopt(argv,"e:u:p:f:t:",["endpoint=","user=","password=","file=","timer="])
-	except getopt.GetoptError:
-		print 'You have no idea how to use this, do not even try'
-		sys.exit(2)
-	for opt, arg in opts:
-		if opt in ("-e", "--endpoint"):
-			endpoint = arg
-		if opt in ("-t", "--timer"):
-			timer = arg
-		if opt in ("-u", "--user"):
-			user = arg
-		elif opt in ("-p", "--password"):
-			password = arg
-	#run the script in a loop
-	checkLoop(endpoint, user, password, timer)
+	backend_url = str(sys.argv[1])
 
+	#Data from all projects
+	projects_request = urllib2.Request("http://"+backend_url+"/projects.json")
+	projects_response = urllib2.urlopen(projects_request).read()
+	projects_json = json.loads(projects_response) #Array of projects
 
-def checkLoop(endpoint, user, password, timer):
 	while(True):
-		response = makeRequest(endpoint, user, password)
-		print strftime("%Y-%m-%d %H:%M:%S"),
-		if checkResponseStatus(response):
-			print 'Server Up'
-		else:
-			print 'Server Down'
-		sleep(float(timer))
+		checkProjectEndpoints(backend_url, projects_json)
+		sleep(10)
+
+	'''
+		[
+		  {
+		    "id": 1,
+		    "name": "Test Project",
+		    "endpoints": [
+		      {
+		        "id": 1,
+		        "name": "TSYS",
+		        "endpoint_url": "https://tsys.mapi.discovercard.com/cardsvcs/acs/acct/v1/account",
+		        "project_id": 1,
+		        "requests": [
+		          {
+		            "id": 1,
+		            "name": "Test Request",
+		            "header": "{'Authorization':'DCRDBasic NjAxMTAwODI3MDA0MTc4MDogOmNjY2Nj','X-Client-Platform':'iPhone'}",
+		            "body": "Things",
+		            "endpoint_id": 1,
+		            "status": true
+		          }
+		        ]
+		      }
+		    ]
+		  }
+		]
+	'''
+
+def checkProjectEndpoints(backend_url, projects_json):
+	#Loop Projects
+	for project in projects_json:
+		print "\n\n#################### " + project['name'] + " ####################\n"
+		#Loop endpoints
+		for endpoint in project['endpoints']:
+			print "\n  -    " + endpoint['name'] + "\n"
+			#Loop Requests
+			for request in endpoint['requests']:
+				server_status = endpointStatus(endpoint,request)
+				updateServerStatus(backend_url, request['id'], server_status)
+				print strftime("%Y-%m-%d %H:%M:%S") + "  " + request['name'] + " --------- " + ("Server UP" if server_status else "Server DOWN")
 
 
-def makeRequest(endpoint, user, password):
-	authHeader = 'DCRDBasic ' + base64.b64encode(user + ': :' + password)
-	headers = {'Authorization' : authHeader, 'X-Client-Platform' : 'iPhone'}
-	request = urllib2.Request(endpoint, None, headers)
+def endpointStatus(endpoint, request):
+	requestHeader_string = request['header'].replace("'", "\"")
+	try:
+		#Try to parse the header
+		header = json.loads(requestHeader_string)
+		request = urllib2.Request(endpoint['endpoint_url'], headers=header)
+	except:
+		#No header
+		request = urllib2.Request(endpoint['endpoint_url'])
 
+	#Make the server status call
+	#The server will be UP if the status code is 200
 	try:
 		response = urllib2.urlopen(request)
-		return parseJSON(response, user)
+		return response.getcode() == 200
 	except urllib2.HTTPError, error:
-		return parseJSON(error, user)
-
-
-def parseJSON(response, user):
-	responseBody = response.read()
-	#add the http code and user to the response object
-	jsonResponse = {
-		"httpCode":response.getcode(),
-		"user":user
-	}
-	if responseBody:
-		try:
-			jsonResponse.update(json.loads(responseBody))
-		except ValueError:
-			#No JSON response (Ex. servers down, html response)
-			return jsonResponse
-	return jsonResponse
-	
-
-def checkResponseStatus(r):
-	if r['httpCode'] == 200:
-		return True
-	else:
 		return False
 
-
+def updateServerStatus(backend_url, request_id, status):
+	payload = json.dumps({ "status" : status })
+	headers = {"Content-Type": "application/json"}
+	#status
+	request = urllib2.Request("http://"+backend_url+"/requests/"+str(request_id), data=payload, headers=headers)
+	request.get_method = lambda: 'PUT'
+	try:
+		response = urllib2.urlopen(request).read()
+		print response
+	except Exception, e:
+		pass
+	
+	
 #main
 if __name__ == "__main__":
 	main(sys.argv[1:])
