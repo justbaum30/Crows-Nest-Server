@@ -16,7 +16,7 @@
       <tr>
         <td><i class="fa fa-circle <%= project.status_css_class %>"></i></td>
         <td><%= link_to project.name, project_path(project) %></td>
-        <td><%= project.endpoints.size %></td>
+        <td><%= link_to "#{project.number_available_endpoints}/#{project.endpoints.size} endpoints are available", endpoints_path(:project_id => project.id) %></td>
         <td>
           <%= link_to t('.edit', :default => t("helpers.links.edit")),
                       edit_project_path(project), :class => 'btn btn-default btn-xs' %>

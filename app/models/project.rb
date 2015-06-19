@@ -1,7 +1,7 @@
 class Project < ActiveRecord::Base
   has_many :endpoints
 
-  def number_successful_endpoints
+  def number_available_endpoints
     count = 0
     self.endpoints.each do |endpoint|
       if endpoint.status
@@ -12,7 +12,7 @@ class Project < ActiveRecord::Base
   end
 
   def status
-    self.number_successful_endpoints > 0
+    self.number_available_endpoints > 0
   end
 
   def status_css_class

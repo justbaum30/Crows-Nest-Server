@@ -5,10 +5,11 @@ class EndpointsController < ApplicationController
   # GET /endpoints.json
   def index
     @endpoints = Endpoint.all
+    @endpoints = @endpoints.where(project_id: params[:project_id]) if params[:project_id].present?
     respond_to do |format|
       format.html
       format.json { render :json => @endpoints.to_json(
-                               :except => [:created_at, :updated_at], :include => {
+                               :except => [:created_at, :updated_at], :methods => [:status, :number_successful_requests], :include => {
                                                                         :requests => { :except => [:created_at, :updated_at] } }) }
     end
   end
@@ -19,7 +20,7 @@ class EndpointsController < ApplicationController
     respond_to do |format|
       format.html
       format.json { render :json => @endpoint.to_json(
-                               :except => [:created_at, :updated_at], :include => {
+                               :except => [:created_at, :updated_at], :methods => [:status, :number_successful_requests], :include => {
                                                                         :requests => { :except => [:created_at, :updated_at] } }) }
     end
   end
@@ -81,6 +82,6 @@ class EndpointsController < ApplicationController
 
     # Never trust parameters from the scary internet, only allow the white list through.
     def endpoint_params
-      params.require(:endpoint).permit(:name, :url, :project_id)
+      params.require(:endpoint).permit(:name, :endpoint_url, :project_id)
     end
 end

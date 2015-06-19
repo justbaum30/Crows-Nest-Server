@@ -23,11 +23,11 @@
     <%= error_span(@endpoint[:name]) %>
   </div>
   <div class="control-group">
-    <%= f.label :url, :class => 'control-label' %>
+    <%= f.label :endpoint_url, :class => 'control-label' %>
     <div class="controls">
       <%= f.text_field :endpoint_url, :class => 'form-control' %>
     </div>
-    <%= error_span(@endpoint[:url]) %>
+    <%= error_span(@endpoint[:endpoint_url]) %>
   </div>
   <div class="control-group">
     <%= f.label :project_id, :class => 'control-label' %>
