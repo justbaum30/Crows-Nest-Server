@@ -20,7 +20,6 @@ class RequestsController < ApplicationController
   # GET /requests/1
   # GET /requests/1.json
   def show
-    make_flag_request
     respond_to do |format|
       format.html
       format.json { render :json => @request.to_json(:except => [:created_at, :updated_at]) }
