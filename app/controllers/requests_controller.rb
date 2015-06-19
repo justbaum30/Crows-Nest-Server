@@ -5,6 +5,7 @@ class RequestsController < ApplicationController
   # GET /requests.json
   def index
     @requests = Request.all
+    @requests = @requests.where(endpoint_id: params[:endpoint_id]) if params[:endpoint_id].present?
     respond_to do |format|
       format.html
       format.json { render :json => @requests.to_json(:except => [:created_at, :updated_at]) }
@@ -77,6 +78,6 @@ class RequestsController < ApplicationController
 
     # Never trust parameters from the scary internet, only allow the white list through.
     def request_params
-      params.require(:request).permit(:name, :header, :body, :endpoint_id)
+      params.require(:request).permit(:name, :header, :body, :endpoint_id, :status)
     end
 end

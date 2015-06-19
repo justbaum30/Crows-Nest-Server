@@ -8,8 +8,8 @@ class ProjectsController < ApplicationController
     respond_to do |format|
       format.html
       format.json { render :json => @projects.to_json(
-                               :except => [:created_at, :updated_at], :include => {
-                                                                        :endpoints => { :except => [:created_at, :updated_at], :include => {
+                               :except => [:created_at, :updated_at], :methods => [:status, :number_available_endpoints], :include => {
+                                                                        :endpoints => { :except => [:created_at, :updated_at], :methods => [:status, :number_successful_requests], :include => {
                                                                             :requests => { :except => [:created_at, :updated_at] } } } }) }
     end
   end
@@ -20,8 +20,8 @@ class ProjectsController < ApplicationController
     respond_to do |format|
       format.html
       format.json { render :json => @project.to_json(
-                               :except => [:created_at, :updated_at], :include => {
-                                   :endpoints => { :except => [:created_at, :updated_at], :include => {
+                               :except => [:created_at, :updated_at], :methods => [:status, :number_available_endpoints], :include => {
+                                   :endpoints => { :except => [:created_at, :updated_at], :methods => [:status, :number_successful_requests], :include => {
                                        :requests => { :except => [:created_at, :updated_at] } } } }) }
     end
   end
