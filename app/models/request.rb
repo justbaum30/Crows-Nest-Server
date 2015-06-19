@@ -5,7 +5,7 @@ class Request < ActiveRecord::Base
 
   def status_has_changed
     make_parse_api_request
-    if self.id == 2
+    if self.id == 5
       if self.status
         lower_flag
       else
