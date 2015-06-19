@@ -13,3 +13,11 @@
  *= require_tree .
  *= require_self
  */
+
+.fa.fa-circle.good {
+    color: green
+}
+
+.fa.fa-circle.bad {
+    color: red
+}
