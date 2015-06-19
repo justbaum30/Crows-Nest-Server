@@ -5,11 +5,25 @@ class ProjectsController < ApplicationController
   # GET /projects.json
   def index
     @projects = Project.all
+    respond_to do |format|
+      format.html
+      format.json { render :json => @projects.to_json(
+                               :except => [:created_at, :updated_at], :include => {
+                                                                        :endpoints => { :except => [:created_at, :updated_at], :include => {
+                                                                            :requests => { :except => [:created_at, :updated_at] } } } }) }
+    end
   end
 
   # GET /projects/1
   # GET /projects/1.json
   def show
+    respond_to do |format|
+      format.html
+      format.json { render :json => @project.to_json(
+                               :except => [:created_at, :updated_at], :include => {
+                                   :endpoints => { :except => [:created_at, :updated_at], :include => {
+                                       :requests => { :except => [:created_at, :updated_at] } } } }) }
+    end
   end
 
   # GET /projects/new

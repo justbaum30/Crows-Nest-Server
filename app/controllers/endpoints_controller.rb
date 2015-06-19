@@ -5,11 +5,23 @@ class EndpointsController < ApplicationController
   # GET /endpoints.json
   def index
     @endpoints = Endpoint.all
+    respond_to do |format|
+      format.html
+      format.json { render :json => @endpoints.to_json(
+                               :except => [:created_at, :updated_at], :include => {
+                                                                        :requests => { :except => [:created_at, :updated_at] } }) }
+    end
   end
 
   # GET /endpoints/1
   # GET /endpoints/1.json
   def show
+    respond_to do |format|
+      format.html
+      format.json { render :json => @endpoint.to_json(
+                               :except => [:created_at, :updated_at], :include => {
+                                                                        :requests => { :except => [:created_at, :updated_at] } }) }
+    end
   end
 
   # GET /endpoints/new

@@ -5,11 +5,19 @@ class RequestsController < ApplicationController
   # GET /requests.json
   def index
     @requests = Request.all
+    respond_to do |format|
+      format.html
+      format.json { render :json => @requests.to_json(:except => [:created_at, :updated_at]) }
+    end
   end
 
   # GET /requests/1
   # GET /requests/1.json
   def show
+    respond_to do |format|
+      format.html
+      format.json { render :json => @request.to_json(:except => [:created_at, :updated_at]) }
+    end
   end
 
   # GET /requests/new
