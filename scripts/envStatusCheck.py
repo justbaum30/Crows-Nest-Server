@@ -76,7 +76,8 @@ def endpointStatus(endpoint, request):
 	#Make the server status call
 	#The server will be UP if the status code is 200
 	try:
-		response = urllib2.urlopen(request)
+		gcontext = ssl.SSLContext(ssl.PROTOCOL_TLSv1)  # Disable SSL
+		response = urllib2.urlopen(request, context=gcontext)
 		return response.getcode() == 200
 	except urllib2.HTTPError, error:
 		return False
