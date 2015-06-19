@@ -1,3 +1,8 @@
+require 'net/https'
+require 'net/http'
+require 'uri'
+require 'ruby_spark'
+
 class RequestsController < ApplicationController
   before_action :set_request, only: [:show, :edit, :update, :destroy]
 
@@ -15,6 +20,7 @@ class RequestsController < ApplicationController
   # GET /requests/1
   # GET /requests/1.json
   def show
+    make_flag_request
     respond_to do |format|
       format.html
       format.json { render :json => @request.to_json(:except => [:created_at, :updated_at]) }
@@ -80,4 +86,5 @@ class RequestsController < ApplicationController
     def request_params
       params.require(:request).permit(:name, :header, :body, :endpoint_id, :status)
     end
+
 end
