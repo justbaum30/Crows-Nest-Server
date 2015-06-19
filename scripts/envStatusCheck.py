@@ -4,7 +4,8 @@ import base64
 import json
 from urlparse import urlparse, parse_qs
 from time import gmtime, strftime, sleep
- 
+import ssl
+
 '''
 
 '''
@@ -76,6 +77,8 @@ def endpointStatus(endpoint, request):
 	#Make the server status call
 	#The server will be UP if the status code is 200
 	try:
+		# gcontext = ssl.SSLContext(ssl.PROTOCOL_TLSv1)  # Disable SSL
+		# response = urllib2.urlopen(request, context=gcontext)
 		response = urllib2.urlopen(request)
 		return response.getcode() == 200
 	except urllib2.HTTPError, error:
