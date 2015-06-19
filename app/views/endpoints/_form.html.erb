@@ -1,29 +1,45 @@
-<%= form_for(@endpoint) do |f| %>
-  <% if @endpoint.errors.any? %>
-    <div id="error_explanation">
-      <h2><%= pluralize(@endpoint.errors.count, "error") %> prohibited this endpoint from being saved:</h2>
+<%= form_for @endpoint, :html => { :class => "form-horizontal endpoint" } do |f| %>
 
-      <ul>
-      <% @endpoint.errors.full_messages.each do |message| %>
-        <li><%= message %></li>
-      <% end %>
-      </ul>
+    <% if @endpoint.errors.any? %>
+    <div id="error_expl" class="panel panel-danger">
+      <div class="panel-heading">
+        <h3 class="panel-title"><%= pluralize(@endpoint.errors.count, "error") %> prohibited this endpoint from being saved:</h3>
+      </div>
+      <div class="panel-body">
+        <ul>
+        <% @endpoint.errors.full_messages.each do |msg| %>
+          <li><%= msg %></li>
+        <% end %>
+        </ul>
+      </div>
     </div>
   <% end %>
 
-  <div class="field">
-    <%= f.label :name %><br>
-    <%= f.text_field :name %>
+  <div class="control-group">
+    <%= f.label :name, :class => 'control-label' %>
+    <div class="controls">
+      <%= f.text_field :name, :class => 'form-control' %>
+    </div>
+    <%= error_span(@endpoint[:name]) %>
   </div>
-  <div class="field">
-    <%= f.label :url %><br>
-    <%= f.text_field :url %>
+  <div class="control-group">
+    <%= f.label :url, :class => 'control-label' %>
+    <div class="controls">
+      <%= f.text_field :url, :class => 'form-control' %>
+    </div>
+    <%= error_span(@endpoint[:url]) %>
   </div>
-  <div class="field">
-    <%= f.label :project_id %><br>
-    <%= f.text_field :project_id %>
+  <div class="control-group">
+    <%= f.label :project_id, :class => 'control-label' %>
+    <div class="controls">
+      <%= f.text_field :project_id, :class => 'form-control' %>
+    </div>
+    <%= error_span(@endpoint[:project_id]) %>
   </div>
-  <div class="actions">
-    <%= f.submit %>
-  </div>
+
+
+  <%= f.submit nil, :class => 'btn btn-primary' %>
+  <%= link_to t('.cancel', :default => t("helpers.links.cancel")),
+            endpoints_path, :class => 'btn btn-default' %>
+
 <% end %>

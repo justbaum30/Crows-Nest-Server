@@ -1,33 +1,52 @@
-<%= form_for(@request) do |f| %>
-  <% if @request.errors.any? %>
-    <div id="error_explanation">
-      <h2><%= pluralize(@request.errors.count, "error") %> prohibited this request from being saved:</h2>
+<%= form_for @request, :html => { :class => "form-horizontal request" } do |f| %>
 
-      <ul>
-      <% @request.errors.full_messages.each do |message| %>
-        <li><%= message %></li>
-      <% end %>
-      </ul>
+    <% if @request.errors.any? %>
+    <div id="error_expl" class="panel panel-danger">
+      <div class="panel-heading">
+        <h3 class="panel-title"><%= pluralize(@request.errors.count, "error") %> prohibited this request from being saved:</h3>
+      </div>
+      <div class="panel-body">
+        <ul>
+        <% @request.errors.full_messages.each do |msg| %>
+          <li><%= msg %></li>
+        <% end %>
+        </ul>
+      </div>
     </div>
   <% end %>
 
-  <div class="field">
-    <%= f.label :name %><br>
-    <%= f.text_field :name %>
+  <div class="control-group">
+    <%= f.label :name, :class => 'control-label' %>
+    <div class="controls">
+      <%= f.text_field :name, :class => 'form-control' %>
+    </div>
+    <%= error_span(@request[:name]) %>
   </div>
-  <div class="field">
-    <%= f.label :header %><br>
-    <%= f.text_area :header %>
+  <div class="control-group">
+    <%= f.label :header, :class => 'control-label' %>
+    <div class="controls">
+      <%= f.text_field :header, :class => 'form-control' %>
+    </div>
+    <%= error_span(@request[:header]) %>
   </div>
-  <div class="field">
-    <%= f.label :body %><br>
-    <%= f.text_area :body %>
+  <div class="control-group">
+    <%= f.label :body, :class => 'control-label' %>
+    <div class="controls">
+      <%= f.text_field :body, :class => 'form-control' %>
+    </div>
+    <%= error_span(@request[:body]) %>
   </div>
-  <div class="field">
-    <%= f.label :endpoint_id %><br>
-    <%= f.text_field :endpoint_id %>
+  <div class="control-group">
+    <%= f.label :endpoint_id, :class => 'control-label' %>
+    <div class="controls">
+      <%= f.text_field :endpoint_id, :class => 'form-control' %>
+    </div>
+    <%= error_span(@request[:endpoint_id]) %>
   </div>
-  <div class="actions">
-    <%= f.submit %>
-  </div>
+
+
+  <%= f.submit nil, :class => 'btn btn-primary' %>
+  <%= link_to t('.cancel', :default => t("helpers.links.cancel")),
+            requests_path, :class => 'btn btn-default' %>
+
 <% end %>

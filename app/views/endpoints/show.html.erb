@@ -1,19 +1,23 @@
-<p id="notice"><%= notice %></p>
+<%- model_class = Endpoint -%>
+<div class="page-header">
+  <h1><%=t '.title', :default => model_class.model_name.human.titleize %></h1>
+</div>
 
-<p>
-  <strong>Name:</strong>
-  <%= @endpoint.name %>
-</p>
+<dl class="dl-horizontal">
+  <dt><strong><%= model_class.human_attribute_name(:name) %>:</strong></dt>
+  <dd><%= @endpoint.name %></dd>
+  <dt><strong><%= model_class.human_attribute_name(:url) %>:</strong></dt>
+  <dd><%= @endpoint.url %></dd>
+  <dt><strong><%= model_class.human_attribute_name(:project_id) %>:</strong></dt>
+  <dd><%= @endpoint.project_id %></dd>
+</dl>
 
-<p>
-  <strong>Url:</strong>
-  <%= @endpoint.url %>
-</p>
-
-<p>
-  <strong>Project:</strong>
-  <%= @endpoint.project %>
-</p>
-
-<%= link_to 'Edit', edit_endpoint_path(@endpoint) %> |
-<%= link_to 'Back', endpoints_path %>
+<%= link_to t('.back', :default => t("helpers.links.back")),
+              endpoints_path, :class => 'btn btn-default'  %>
+<%= link_to t('.edit', :default => t("helpers.links.edit")),
+              edit_endpoint_path(@endpoint), :class => 'btn btn-default' %>
+<%= link_to t('.destroy', :default => t("helpers.links.destroy")),
+              endpoint_path(@endpoint),
+              :method => 'delete',
+              :data => { :confirm => t('.confirm', :default => t("helpers.links.confirm", :default => 'Are you sure?')) },
+              :class => 'btn btn-danger' %>
