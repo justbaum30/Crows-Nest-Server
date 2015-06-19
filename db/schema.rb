@@ -11,14 +11,14 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150619013233) do
+ActiveRecord::Schema.define(version: 20150619025533) do
 
   create_table "endpoints", force: :cascade do |t|
     t.string   "name"
-    t.string   "url"
+    t.string   "endpointUrl"
     t.integer  "project_id"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
+    t.datetime "created_at",  null: false
+    t.datetime "updated_at",  null: false
   end
 
   add_index "endpoints", ["project_id"], name: "index_endpoints_on_project_id"
@@ -36,6 +36,7 @@ ActiveRecord::Schema.define(version: 20150619013233) do
     t.integer  "endpoint_id"
     t.datetime "created_at",  null: false
     t.datetime "updated_at",  null: false
+    t.boolean  "status"
   end
 
   add_index "requests", ["endpoint_id"], name: "index_requests_on_endpoint_id"
