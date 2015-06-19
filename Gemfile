@@ -1,5 +1,10 @@
 source 'https://rubygems.org'
 
+# Custom gems
+gem 'rack', '1.6.1'
+gem 'therubyracer'
+gem 'less-rails'
+gem 'twitter-bootstrap-rails'
 
 # Bundle edge Rails instead: gem 'rails', github: 'rails/rails'
 gem 'rails', '4.2.2'
@@ -13,8 +18,6 @@ gem 'uglifier', '>= 1.3.0'
 gem 'coffee-rails', '~> 4.1.0'
 # See https://github.com/rails/execjs#readme for more supported runtimes
 # gem 'therubyracer', platforms: :ruby
-
-gem 'rack', '1.6.1'
 
 # Use jquery as the JavaScript library
 gem 'jquery-rails'
