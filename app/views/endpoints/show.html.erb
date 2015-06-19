@@ -3,14 +3,20 @@
   <h1><%=t '.title', :default => model_class.model_name.human.titleize %></h1>
 </div>
 
-<dl class="dl-horizontal">
-  <dt><strong><%= model_class.human_attribute_name(:name) %>:</strong></dt>
-  <dd><%= @endpoint.name %></dd>
-  <dt><strong><%= model_class.human_attribute_name(:url) %>:</strong></dt>
-  <dd><%= @endpoint.endpoint_url %></dd>
-  <dt><strong><%= model_class.human_attribute_name(:project_id) %>:</strong></dt>
-  <dd><%= @endpoint.project_id %></dd>
-</dl>
+<div>
+  <strong><%= model_class.human_attribute_name(:name) %>:</strong>
+  <span><%= @endpoint.name %></span>
+</div>
+<div>
+  <strong><%= model_class.human_attribute_name(:endpoint_url) %>:</strong>
+  <span><%= @endpoint.endpoint_url %></span>
+</div>
+<div>
+  <strong><%= model_class.human_attribute_name(:project_id) %>:</strong>
+  <span><%= @endpoint.project_id %></span>
+</div>
+
+<br/>
 
 <%= link_to t('.back', :default => t("helpers.links.back")),
               endpoints_path, :class => 'btn btn-default'  %>
