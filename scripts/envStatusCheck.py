@@ -5,6 +5,7 @@ import json
 from urlparse import urlparse, parse_qs
 from time import gmtime, strftime, sleep
 import ssl
+import argparse
 
 '''
 
@@ -12,16 +13,24 @@ import ssl
 
 def main(argv):
 
-	backend_url = str(sys.argv[1])
+	parser = argparse.ArgumentParser()
+	parser.add_argument("baseUrl", help="the base url where your crows-nest-server resides")
+	parser.add_argument("--delay", help="time in seconds between checking the endpoint status", type=int, default=10)
+	parser.add_argument("--ssl", help="should ssl be used when checking the endpoint status", action="store_true")
+	args = parser.parse_args()
 
 	#Data from all projects
-	projects_request = urllib2.Request("http://"+backend_url+"/projects.json")
+	projects_request = urllib2.Request("http://"+args.baseUrl+"/projects.json")
 	projects_response = urllib2.urlopen(projects_request).read()
 	projects_json = json.loads(projects_response) #Array of projects
 
 	while(True):
-		checkProjectEndpoints(backend_url, projects_json)
-		sleep(10)
+		try:
+			checkProjectEndpoints(args.baseUrl, projects_json, args.ssl)
+			sleep(args.delay)
+		except KeyboardInterrupt:
+			print "\nCustom quit stuff"
+			sys.exit()
 
 	'''
 		[
@@ -50,7 +59,7 @@ def main(argv):
 		]
 	'''
 
-def checkProjectEndpoints(backend_url, projects_json):
+def checkProjectEndpoints(backend_url, projects_json, useSSL):
 	#Loop Projects
 	for project in projects_json:
 		print "\n\n#################### " + project['name'] + " ####################\n"
@@ -59,12 +68,12 @@ def checkProjectEndpoints(backend_url, projects_json):
 			print "\n  -    " + endpoint['name'] + "\n"
 			#Loop Requests
 			for request in endpoint['requests']:
-				server_status = endpointStatus(endpoint,request)
+				server_status = endpointStatus(endpoint, request, useSSL)
 				updateServerStatus(backend_url, request['id'], server_status)
 				print strftime("%Y-%m-%d %H:%M:%S") + "  " + request['name'] + " --------- " + ("Server UP" if server_status else "Server DOWN")
 
 
-def endpointStatus(endpoint, request):
+def endpointStatus(endpoint, request, useSSL):
 	requestHeader_string = request['header'].replace("'", "\"")
 	try:
 		#Try to parse the header
@@ -77,9 +86,13 @@ def endpointStatus(endpoint, request):
 	#Make the server status call
 	#The server will be UP if the status code is 200
 	try:
-		# gcontext = ssl.SSLContext(ssl.PROTOCOL_TLSv1)  # Disable SSL
-		# response = urllib2.urlopen(request, context=gcontext)
-		response = urllib2.urlopen(request)
+		response = None
+		if useSSL:
+			response = urllib2.urlopen(request)
+		else:
+			gcontext = ssl.SSLContext(ssl.PROTOCOL_TLSv1)  # Disable SSL
+			response = urllib2.urlopen(request, context=gcontext)
+
 		return response.getcode() == 200
 	except urllib2.HTTPError, error:
 		return False
