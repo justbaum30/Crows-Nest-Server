@@ -1,7 +1,7 @@
 class Request < ActiveRecord::Base
   belongs_to :endpoint
 
-  after_update :after_changed_test, :if => :status_changed?
+  after_update :after_changed_test
 
   def after_changed_test
     self.endpoint.notify_status_changed

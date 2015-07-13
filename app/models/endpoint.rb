@@ -13,23 +13,30 @@ class Endpoint < ActiveRecord::Base
   def notify_status_changed
     old_status = self.status
     new_status = self.number_successful_requests > 0
-    self.update_columns(status: new_status)
 
     if old_status != new_status
-      logger.debug 'The status of the endpoint has changed'
+      self.update_columns(status: new_status)
+      logger.debug 'status changed...'
 
-      #make_parse_api_request
-      if self.id == 2235 # TODO: Don't hardcode endpoint id for flag
-        if new_status
-          lower_flag
-        else
-          hoist_flag
-        end
+      if Settings.send_notifications
+        logger.debug 'sending notifications...'
+        #send_notifications_to_devices
       end
     end
   end
 
   ### Network requests ###
+
+  private def send_notifications_to_devices
+    make_parse_api_request
+    if self.id == 2235 # TODO: Don't hardcode endpoint id for flag
+      if new_status
+        lower_flag
+      else
+        hoist_flag
+      end
+    end
+  end
 
   private def make_parse_api_request
     header = {

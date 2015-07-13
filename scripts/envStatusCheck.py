@@ -24,10 +24,14 @@ def main(argv):
 	projects_response = urllib2.urlopen(projects_request).read()
 	projects_json = json.loads(projects_response) #Array of projects
 
+	#The first time, we don't want the server to send out notifications
+	is_first_loop = True
+
 	while(True):
 		try:
-			checkProjectEndpoints(args.baseUrl, projects_json, args.ssl)
+			checkProjectEndpoints(args.baseUrl, projects_json, args.ssl, is_first_loop)
 			sleep(args.delay)
+			is_first_loop = False
 		except KeyboardInterrupt:
 			print "\nCustom quit stuff"
 			sys.exit()
@@ -59,7 +63,7 @@ def main(argv):
 		]
 	'''
 
-def checkProjectEndpoints(backend_url, projects_json, useSSL):
+def checkProjectEndpoints(backend_url, projects_json, use_ssl, is_first_loop):
 	#Loop Projects
 	for project in projects_json:
 		print "\n\n#################### " + project['name'] + " ####################\n"
@@ -68,8 +72,8 @@ def checkProjectEndpoints(backend_url, projects_json, useSSL):
 			print "\n  -    " + endpoint['name'] + "\n"
 			#Loop Requests
 			for request in endpoint['requests']:
-				server_status = endpointStatus(endpoint, request, useSSL)
-				updateServerStatus(backend_url, request['id'], server_status)
+				server_status = endpointStatus(endpoint, request, use_ssl)
+				updateServerStatus(backend_url, request['id'], server_status, is_first_loop)
 				print strftime("%Y-%m-%d %H:%M:%S") + "  " + request['name'] + " --------- " + ("Server UP" if server_status else "Server DOWN")
 
 
@@ -97,8 +101,8 @@ def endpointStatus(endpoint, request, useSSL):
 	except urllib2.HTTPError, error:
 		return False
 
-def updateServerStatus(backend_url, request_id, status):
-	payload = json.dumps({ "status" : status })
+def updateServerStatus(backend_url, request_id, status, is_first_loop):
+	payload = json.dumps({ "status" : status, "send_notifications" : not is_first_loop })
 	headers = {"Content-Type": "application/json"}
 	#status
 	request = urllib2.Request("http://"+backend_url+"/requests/"+str(request_id), data=payload, headers=headers)
