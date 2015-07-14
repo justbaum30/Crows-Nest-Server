@@ -35,7 +35,7 @@ class Endpoint < ActiveRecord::Base
   def send_notifications_to_devices
     make_parse_api_request
     if self.id == 2235 # TODO: Don't hardcode endpoint id for flag
-      if new_status
+      if self.status
         lower_flag
       else
         hoist_flag
