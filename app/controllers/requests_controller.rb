@@ -1,8 +1,3 @@
-require 'net/https'
-require 'net/http'
-require 'uri'
-require 'ruby_spark'
-
 class RequestsController < ApplicationController
   before_action :set_request, only: [:show, :edit, :update, :destroy]
 

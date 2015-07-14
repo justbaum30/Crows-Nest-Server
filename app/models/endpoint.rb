@@ -1,3 +1,8 @@
+require 'net/https'
+require 'net/http'
+require 'uri'
+require 'ruby_spark'
+
 class Endpoint < ActiveRecord::Base
   belongs_to :project
   has_many :requests
@@ -27,7 +32,7 @@ class Endpoint < ActiveRecord::Base
 
   ### Network requests ###
 
-  private def send_notifications_to_devices
+  def send_notifications_to_devices
     make_parse_api_request
     if self.id == 2235 # TODO: Don't hardcode endpoint id for flag
       if new_status
@@ -38,7 +43,7 @@ class Endpoint < ActiveRecord::Base
     end
   end
 
-  private def make_parse_api_request
+  def make_parse_api_request
     header = {
         'Content-Type' => 'application/json',
         'X-Parse-Application-Id' => 'rDo0wJWA9ZOvf3oVhx6UW2b5YnVHsxo2ToicQ1GE',
@@ -59,7 +64,7 @@ class Endpoint < ActiveRecord::Base
     puts "Response #{res.code} #{res.message}: #{res.body}"
   end
 
-  private def hoist_flag
+  def hoist_flag
     RubySpark.configuration do |config|
       config.access_token = 'd96b9f0c4d42cbfeab281f55abf86de26669e257'
     end
@@ -68,7 +73,7 @@ class Endpoint < ActiveRecord::Base
     core.function('hoist', 'hoistDiscover')
   end
 
-  private def lower_flag
+  def lower_flag
     RubySpark.configuration do |config|
       config.access_token = 'd96b9f0c4d42cbfeab281f55abf86de26669e257'
     end
