@@ -88,7 +88,7 @@ def endpointStatus(endpoint, request, useSSL):
 		request = urllib2.Request(endpoint['endpoint_url'])
 
 	#Make the server status call
-	#The server will be UP if the status code is 200
+	#The server will be UP if the status code is not any type of 500 or greater error
 	try:
 		response = None
 		if useSSL:
@@ -97,7 +97,7 @@ def endpointStatus(endpoint, request, useSSL):
 			gcontext = ssl.SSLContext(ssl.PROTOCOL_TLSv1)  # Disable SSL
 			response = urllib2.urlopen(request, context=gcontext)
 
-		return response.getcode() == 200
+		return response.getcode() < 500
 	except urllib2.HTTPError, error:
 		return False
 
