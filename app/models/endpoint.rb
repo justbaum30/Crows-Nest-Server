@@ -21,19 +21,17 @@ class Endpoint < ActiveRecord::Base
 
     if old_status != new_status
       self.update_columns(status: new_status)
-      logger.debug 'status changed...'
-
-      if Settings.send_notifications
-        logger.debug 'sending notifications...'
-        #send_notifications_to_devices
-      end
+      send_notifications_to_devices
     end
   end
 
   ### Network requests ###
 
   def send_notifications_to_devices
-    make_parse_api_request
+    if Settings.send_notifications
+      #make_parse_api_request
+    end
+
     if self.id == 2235 # TODO: Don't hardcode endpoint id for flag
       if self.status
         lower_flag
